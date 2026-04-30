@@ -1,62 +1,58 @@
--- Arquivo de apoio, caso você queira criar tabelas como as aqui criadas para a API funcionar.
--- Você precisa executar os comandos no banco de dados para criar as tabelas,
--- ter este arquivo aqui não significa que a tabela em seu BD estará como abaixo!
+CREATE DATABASE CBacad;
+USE CBacad;
 
-/*
-comandos para mysql server
-*/
-
-CREATE DATABASE chuteBox;
-
-USE chuteBox;
-
-CREATE TABLE empresa (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	razao_social VARCHAR(50),
-	cnpj CHAR(14),
-	codigo_ativacao VARCHAR(50)
+CREATE TABLE academia (
+idacademia INT PRIMARY KEY AUTO_INCREMENT,
+nome VARCHAR(100),
+CEP CHAR(8),
+bairro VARCHAR(45)
 );
+
+INSERT INTO academia (nome, CEP, bairro) VALUES
+('Iron Fit', '12345123', 'Monte Alegre');
+
+SELECT * FROM academia;
 
 CREATE TABLE usuario (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	nome VARCHAR(50),
-	email VARCHAR(50),
-	senha VARCHAR(50),
-	fk_empresa INT,
-	FOREIGN KEY (fk_empresa) REFERENCES empresa(id)
+idusuario INT PRIMARY KEY AUTO_INCREMENT,
+nome VARCHAR(100) NOT NULL,
+email VARCHAR(50) NOT NULL,
+senha VARCHAR(100) NOT NULL,
+genero CHAR(1),
+CONSTRAINT chk_genero CHECK (genero IN ('M', 'F', 'O')),
+fkAcademia INT,
+CONSTRAINT fk_academia_const FOREIGN KEY (fkAcademia) REFERENCES academia(idacademia)
 );
 
-CREATE TABLE aviso (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	titulo VARCHAR(100),
-	descricao VARCHAR(150),
-	fk_usuario INT,
-	FOREIGN KEY (fk_usuario) REFERENCES usuario(id)
+INSERT INTO usuario (nome, email, senha, genero, fkAcademia) VALUES
+('Cauã', 'caua.martos@sptech.school', 'senha123', 'M', 1);
+
+SELECT * FROM usuario;
+
+CREATE TABLE post (
+idpost INT PRIMARY KEY AUTO_INCREMENT,
+esporte VARCHAR(10),
+CONSTRAINT chk_esporte CHECK (esporte IN ('Muay Thai', 'Jiu-Jitsu', 'Misto')),
+dtTreino DATETIME,
+descricao VARCHAR(200),
+fkUsuario INT,
+CONSTRAINT fk_usuario_post FOREIGN KEY (fkUsuario) REFERENCES usuario(idusuario)
 );
 
-create table aquario (
-/* em nossa regra de negócio, um aquario tem apenas um sensor */
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	descricao VARCHAR(300),
-	fk_empresa INT,
-	FOREIGN KEY (fk_empresa) REFERENCES empresa(id)
+INSERT INTO post (esporte, dtTreino, descricao, fkUsuario) VALUES
+('Misto', '2026-10-12', 'Lorem Ipslum', '1');
+
+SELECT * FROM post;
+
+CREATE TABLE curtida (
+fkPost INT,
+fkUsuario INT,
+PRIMARY KEY (fkPost, fkUsuario), 
+CONSTRAINT fk_post_curtida FOREIGN KEY (fkPost) REFERENCES post(idpost),
+CONSTRAINT fk_usuario_curtida FOREIGN KEY (fkUsuario) REFERENCES usuario(idusuario)
 );
 
-/* esta tabela deve estar de acordo com o que está em INSERT de sua API do arduino - dat-acqu-ino */
+INSERT INTO curtida (fkPost, fkUsuario) VALUES
+(1, 1);
 
-create table medida (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	dht11_umidade DECIMAL,
-	dht11_temperatura DECIMAL,
-	luminosidade DECIMAL,
-	lm35_temperatura DECIMAL,
-	chave TINYINT,
-	momento DATETIME,
-	fk_aquario INT,
-	FOREIGN KEY (fk_aquario) REFERENCES aquario(id)
-);
-
-insert into empresa (razao_social, codigo_ativacao) values ('Empresa 1', 'ED145B');
-insert into empresa (razao_social, codigo_ativacao) values ('Empresa 2', 'A1B2C3');
-insert into aquario (descricao, fk_empresa) values ('Aquário de Estrela-do-mar', 1);
-insert into aquario (descricao, fk_empresa) values ('Aquário de Peixe-dourado', 2);
+SELECT * FROM curtida;
