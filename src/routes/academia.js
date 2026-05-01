@@ -9,7 +9,7 @@ router.post("/cadastrar", function (req, res) {
 })
 
 router.get("/buscar", function (req, res) {
-    academiaController.buscarPorCnpj(req, res);
+    academiaController.buscarPorCep(req, res);
 });
 
 router.get("/buscar/:id", function (req, res) {

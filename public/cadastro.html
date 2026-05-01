@@ -124,8 +124,8 @@
 </html>
 
 <script>
-  // Array para armazenar empresas cadastradas para validação de código de ativação
-  let listaEmpresasCadastradas = [];
+  // Array para armazenar academia cadastradas para validação de código de ativação
+  let listaAcademiaCadastradas = [];
 
   function cadastrar() {
     // aguardar();
@@ -137,7 +137,8 @@
     var senhaVar = senha_input.value;
     var confirmacaoSenhaVar = confirmacao_senha_input.value;
     var academiaVar = academia_input.value;
-    var idEmpresaVincular;
+    var generoVar = document.querySelector('input[name="genero"]:checked')?.value;
+    var idAcademiaVincular;
 
     // Verificando se há algum campo em branco
     if (
@@ -145,11 +146,12 @@
       emailVar == "" ||
       senhaVar == "" ||
       confirmacaoSenhaVar == "" ||
-      codigoVar == ""
+      academiaVar == "" ||
+      generoVar == ""
     ) {
       cardErro.style.display = "block";
       mensagem_erro.innerHTML =
-        "(Mensagem de erro para todos os campos em branco)";
+        "(Preencha todos os campos corretamente)";
 
       finalizarAguardar();
       return false;
@@ -157,10 +159,10 @@
       setInterval(sumirMensagem, 5000);
     }
 
-    // Verificando se o código de ativação é de alguma empresa cadastrada
-    for (let i = 0; i < listaEmpresasCadastradas.length; i++) {
-      if (listaEmpresasCadastradas[i].codigo_ativacao == codigoVar) {
-        idEmpresaVincular = listaEmpresasCadastradas[i].id;
+    // Verificando se o código de ativação é de alguma academia cadastrada
+    for (let i = 0; i < listaAcademiaCadastradas.length; i++) {
+      if (listaAcademiaCadastradas[i].codigo_ativacao == codigoVar) {
+        idAcademiaVincular = listaAcademiaCadastradas[i].id;
         console.log("Código de ativação válido.");
         break;
       } else {
@@ -182,7 +184,7 @@
         nomeServer: nomeVar,
         emailServer: emailVar,
         senhaServer: senhaVar,
-        idEmpresaVincularServer: idEmpresaVincular,
+        idAcademiaVincularServer: idAcademiaVincular,
       }),
     })
       .then(function (resposta) {
@@ -212,18 +214,18 @@
     return false;
   }
 
-  // Listando empresas cadastradas
+  // Listando academia cadastradas
   function listar() {
-    fetch("/empresas/listar", {
+    fetch("/academia/listar", {
       method: "GET",
     })
       .then(function (resposta) {
-        resposta.json().then((empresas) => {
-          empresas.forEach((empresa) => {
-            listaEmpresasCadastradas.push(empresa);
+        resposta.json().then((academia) => {
+          academia.forEach((academia) => {
+            listaAcademiaCadastradas.push(academia);
 
-            console.log("listaEmpresasCadastradas");
-            console.log(listaEmpresasCadastradas[0].codigo_ativacao);
+            console.log("listaAcademiaCadastradas");
+            console.log(listaAcademiaCadastradas[0].codigo_ativacao);
           });
         });
       })
