@@ -84,24 +84,42 @@
             </div>
             <span>Gênero:</span>
             <div class="campo_radio">
-  <input class="input-radio" type="radio" id="id_masculino" name="genero" value="M">
-  <label for="id_masculino">
-    <div class="radio-btn"></div>
-    <span>Masculino</span>
-  </label>
+              <input
+                class="input-radio"
+                type="radio"
+                id="id_masculino"
+                name="genero"
+                value="M"
+              />
+              <label for="id_masculino">
+                <div class="radio-btn"></div>
+                <span>Masculino</span>
+              </label>
 
-  <input class="input-radio" type="radio" id="id_feminino" name="genero" value="F">
-  <label for="id_feminino">
-    <div class="radio-btn"></div>
-    <span>Feminino</span>
-  </label>
+              <input
+                class="input-radio"
+                type="radio"
+                id="id_feminino"
+                name="genero"
+                value="F"
+              />
+              <label for="id_feminino">
+                <div class="radio-btn"></div>
+                <span>Feminino</span>
+              </label>
 
-  <input class="input-radio" type="radio" id="id_outro" name="genero" value="O">
-  <label for="id_outro">
-    <div class="radio-btn"></div>
-    <span>Outro</span>
-  </label>
-</div>
+              <input
+                class="input-radio"
+                type="radio"
+                id="id_outro"
+                name="genero"
+                value="O"
+              />
+              <label for="id_outro">
+                <div class="radio-btn"></div>
+                <span>Outro</span>
+              </label>
+            </div>
             <button class="botao" onclick="cadastrar()">Cadastrar</button>
           </div>
           <div id="div_aguardar" class="loading-div">
@@ -124,68 +142,42 @@
 </html>
 
 <script>
-  // Array para armazenar academia cadastradas para validação de código de ativação
-  let listaAcademiaCadastradas = [];
-
   function cadastrar() {
-    // aguardar();
-
-    //Recupere o valor da nova input pelo nome do id
-    // Agora vá para o método fetch logo abaixo
     var nomeVar = nome_input.value;
     var emailVar = email_input.value;
     var senhaVar = senha_input.value;
     var confirmacaoSenhaVar = confirmacao_senha_input.value;
-    var academiaVar = academia_input.value;
-    var generoVar = document.querySelector('input[name="genero"]:checked')?.value;
-    var idAcademiaVincular;
+    var academiaVar = academia_input.value || null;
+    var generoVar = document.querySelector(
+      'input[name="genero"]:checked',
+    )?.value;
 
-    // Verificando se há algum campo em branco
     if (
       nomeVar == "" ||
       emailVar == "" ||
       senhaVar == "" ||
       confirmacaoSenhaVar == "" ||
-      academiaVar == "" ||
-      generoVar == ""
+      !generoVar
     ) {
       cardErro.style.display = "block";
-      mensagem_erro.innerHTML =
-        "(Preencha todos os campos corretamente)";
-
+      mensagem_erro.innerHTML = "(Preencha todos os campos corretamente)";
       finalizarAguardar();
       return false;
     } else {
       setInterval(sumirMensagem, 5000);
     }
 
-    // Verificando se o código de ativação é de alguma academia cadastrada
-    for (let i = 0; i < listaAcademiaCadastradas.length; i++) {
-      if (listaAcademiaCadastradas[i].codigo_ativacao == codigoVar) {
-        idAcademiaVincular = listaAcademiaCadastradas[i].id;
-        console.log("Código de ativação válido.");
-        break;
-      } else {
-        cardErro.style.display = "block";
-        mensagem_erro.innerHTML = "(Academia inválida)";
-        finalizarAguardar();
-      }
-    }
-
-    // Enviando o valor da nova input
     fetch("/usuarios/cadastrar", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        // crie um atributo que recebe o valor recuperado aqui
-        // Agora vá para o arquivo routes/usuario.js
         nomeServer: nomeVar,
         emailServer: emailVar,
         senhaServer: senhaVar,
         generoServer: generoVar,
-        idAcademiaVincularServer: idAcademiaVincular,
+        academiaServer: academiaVar,
       }),
     })
       .then(function (resposta) {
@@ -193,7 +185,6 @@
 
         if (resposta.ok) {
           cardErro.style.display = "block";
-
           mensagem_erro.innerHTML =
             "Cadastro realizado com sucesso! Redirecionando para tela de Login...";
 
@@ -213,26 +204,6 @@
       });
 
     return false;
-  }
-
-  // Listando academia cadastradas
-  function listar() {
-    fetch("/academia/listar", {
-      method: "GET",
-    })
-      .then(function (resposta) {
-        resposta.json().then((academia) => {
-          academia.forEach((academia) => {
-            listaAcademiaCadastradas.push(academia);
-
-            console.log("listaAcademiaCadastradas");
-            console.log(listaAcademiaCadastradas[0].codigo_ativacao);
-          });
-        });
-      })
-      .catch(function (resposta) {
-        console.log(`#ERRO: ${resposta}`);
-      });
   }
 
   function sumirMensagem() {

@@ -2,22 +2,22 @@ var database = require("../database/config")
 
 function autenticar(email, senha) {
     console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function entrar(): ", email, senha)
+
     var instrucaoSql = `
-        SELECT idusuario id, nome, email, fkAcademia as idacademia FROM usuario WHERE email = '${email}' AND senha = '${senha}';
+        SELECT u.idusuario id, u.nome, u.email, u.genero, a.nome AS nome_academia FROM usuario u LEFT JOIN academia a ON u.fkAcademia = a.idacademia WHERE u.email = '${email}' AND u.senha = '${senha}';
     `;
+
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);
 }
 
-// Coloque os mesmos parâmetros aqui. Vá para a var instrucaoSql
-function cadastrar(nome, email, senha, fkAcademia) {
-    console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function cadastrar():", nome, email, senha, fkAcademia);
-    
-    // Insira exatamente a query do banco aqui, lembrando da nomenclatura exata nos valores
-    //  e na ordem de inserção dos dados.
+function cadastrar(nome, email, senha, genero, nomeAcademia) {
+    console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function cadastrar():", nome, email, senha, genero, nomeAcademia);
+
     var instrucaoSql = `
-        INSERT INTO usuario (nome, email, senha, fkAcademia) VALUES ('${nome}', '${email}', '${senha}', '${fkAcademia}');
+        INSERT INTO usuario (nome, email, senha, genero, fkAcademia) VALUES ('${nome}', '${email}', '${senha}', '${genero}', (SELECT idacademia FROM academia WHERE nome = '${nomeAcademia}' LIMIT 1));
     `;
+
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);
 }
