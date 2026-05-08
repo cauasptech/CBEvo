@@ -120,6 +120,34 @@ body {
   align-items: center;
 }
 
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.info .cadastre button {
+  background-color: #ff0000;
+  color: #ffffff;
+  font-weight: bolder;
+  font-size: large;
+}
+
+.info .cadastre span {
+color: #000000;
+font-weight: bolder;
+font-size: larger;
+}
+
+.story h2 {
+  display: flex; 
+  flex-direction: columns; 
+  color: red; 
+  justify-content: center;
+  font-size: 60px;
+  margin-top: 10px;
+}
+
 /* FOOTER */
 
 .footer {

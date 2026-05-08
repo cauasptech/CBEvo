@@ -1,0 +1,9 @@
+login.html → salvar GENERO e NOME_ACADEMIA na sessão
+cards.html → mostrar academias do banco em cards
+dashboard.html → gráfico de posts por esporte + gráfico de usuários por gênero
+mural.html → registrar treino e listar posts de todos
+postModel.js → novo arquivo
+postController.js → novo arquivo
+src/routes/post.js → novo arquivo
+app.js → registrar a rota de post
+usuarioModel.js → nova função para contar por gênero
