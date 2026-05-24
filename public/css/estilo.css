@@ -465,3 +465,19 @@ input {
   color: rgba(88, 88, 88, 0.411);
   flex-direction: row;
 }
+
+.historia {
+  display: flex;
+  font-weight: bolder;
+  width: 60%;
+  font-size: 20px;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.historia span {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  color: #000000c2;
+}
