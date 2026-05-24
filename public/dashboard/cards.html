@@ -9,23 +9,34 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CB | Tempo Real</title>
+    <title>CB | Dashboards</title>
 
     <link rel="stylesheet" href="./../css/dashboards.css" />
     <link rel="stylesheet" href="./../css/estilo.css" />
-
     <script src="../js/sessao.js"></script>
-    <script src="../js/alerta.js"></script>
+    <script src="./../js/alerta.js"></script>
+
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
       rel="stylesheet"
     />
+
+    <!-- scripts do Chart.js - 2022-1 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!--FONT AWESOME-->
+    <script
+      src="https://kit.fontawesome.com/9f7414eb10.js"
+      crossorigin="anonymous"
+    ></script>
   </head>
 
-  <body onload="(validarSessao(), listarAcademias())">
+  <!-- <body onload=" atualizarFeed()"> -->
+
+  <body onload="(validarSessao(), carregarGraficos())">
     <div class="janela">
-      <div class="header-left dash-header">
+      <div class="header-left">
         <h1>CHUTE BOXE ★</h1>
 
         <div class="hello">
@@ -35,7 +46,7 @@
         <div class="btn-nav">
           <h3>Geral</h3>
         </div>
-
+        
         <div class="btn-nav-white">
           <a href="./dashboard.html">
             <h3>Acompanhamento</h3>
@@ -54,36 +65,128 @@
       </div>
 
       <div class="dash">
-        <div class="cards" id="cardAcademias"></div>
+        <div id="graficos">
+          <div>
+            <h3 class="tituloGraficos">Posts por Esporte</h3>
+            <div class="graph">
+              <canvas id="chartEsporte"></canvas>
+            </div>
+          </div>
+          <div>
+            <h3 class="tituloGraficos">Usuários por Gênero</h3>
+            <div class="graph">
+              <canvas id="chartGenero"></canvas>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </body>
-
-  <script>
-    b_usuario.innerHTML = sessionStorage.NOME_USUARIO;
-
-    function listarAcademias() {
-      fetch("/academia/listar")
-        .then(function (resposta) {
-          if (resposta.ok) {
-            resposta.json().then(function (academias) {
-              academias.forEach(function (academia) {
-                document.getElementById("cardAcademias").innerHTML += `
-                        <div class="card-aquario">
-                        <div class="title-aquario">
-                        <h1>${academia.nome}</h1>
-                        </div>
-                        <div class="desc-aquario">
-                        <p>CEP: ${academia.fk_CEP}</p>
-                        </div>
-                        </div>`;
-              });
-            });
-          }
-        })
-        .catch(function (erro) {
-          console.log(`#ERRO: ${erro}`);
-        });
-    }
-  </script>
 </html>
+
+<script>
+  b_usuario.innerHTML = sessionStorage.NOME_USUARIO;
+
+  function carregarGraficos() {
+    carregarGraficoEsporte();
+    carregarGraficoGenero();
+  }
+
+  function carregarGraficoEsporte() {
+    fetch("/post/contar-esporte")
+      .then(function (resposta) {
+        if (resposta.ok) {
+          resposta.json().then(function (resultado) {
+            console.log(`Dados recebidos: ${JSON.stringify(resultado)}`);
+
+            var labels = [];
+            var totais = [];
+
+            for (var i = 0; i < resultado.length; i++) {
+              labels.push(resultado[i].esporte);
+              totais.push(resultado[i].total);
+            }
+
+            var dados = {
+              labels: labels,
+              datasets: [
+                {
+                  label: "Quantidade de Posts",
+                  data: totais,
+                  backgroundColor: [
+                    "rgb(230, 0, 90)",
+                    "rgb(75, 192, 192)",
+                    "rgb(255, 205, 86)",
+                  ],
+                },
+              ],
+            };
+
+            var config = {
+              type: "bar",
+              data: dados,
+            };
+
+            new Chart(document.getElementById("chartEsporte"), config);
+          });
+        } else {
+          console.error("Nenhum dado encontrado ou erro na API");
+        }
+      })
+      .catch(function (erro) {
+        console.error(
+          `Houve um erro na obtenção dos dados p/ gráfico: ${erro.message}`,
+        );
+      });
+  }
+
+  function carregarGraficoGenero() {
+    fetch("/usuarios/contar-genero")
+      .then(function (resposta) {
+        if (resposta.ok) {
+          resposta.json().then(function (resultado) {
+            console.log(`Dados recebidos: ${JSON.stringify(resultado)}`);
+
+            var labels = [];
+            var totais = [];
+
+            for (var i = 0; i < resultado.length; i++) {
+              if (resultado[i].genero == "M") labels.push("Masculino");
+              else if (resultado[i].genero == "F") labels.push("Feminino");
+              else labels.push("Outro");
+              totais.push(resultado[i].total);
+            }
+
+            var dados = {
+              labels: labels,
+              datasets: [
+                {
+                  label: "Usuários por Gênero",
+                  data: totais,
+                  backgroundColor: [
+                    "rgb(75, 192, 192)",
+                    "rgb(230, 0, 90)",
+                    "rgb(255, 205, 86)",
+                  ],
+                },
+              ],
+            };
+
+            var config = {
+              type: "pie",
+              data: dados,
+            };
+
+            new Chart(document.getElementById("chartGenero"), config);
+          });
+        } else {
+          console.error("Nenhum dado encontrado ou erro na API");
+        }
+      })
+      .catch(function (erro) {
+        console.error(
+          `Houve um erro na obtenção dos dados p/ gráfico: ${erro.message}`,
+        );
+      });
+  }
+</script>
