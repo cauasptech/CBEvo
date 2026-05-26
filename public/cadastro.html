@@ -14,7 +14,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" />
   </head>
 
-  <body onload="listar(); ativar();">
+  <body
+    onload="
+      listar();
+      ativar();
+    "
+  >
     <!--header inicio-->
     <div class="header">
       <div class="container">
@@ -59,14 +64,25 @@
             </div>
             <div class="campo">
               <span>Senha:</span>
-              <input id="senha_input" type="password" placeholder="******" oninput="validar()" />
+              <input
+                id="senha_input"
+                type="password"
+                placeholder="******"
+                oninput="validar()"
+              />
               <div class="div_validacao">
-              <input type="checkbox" id="validacao_num" disabled>
-              <span id="validacao_num_span">Senha contém caractere numérico</span>
-              <input type="checkbox" id="validacao_maiu" disabled>
-              <span id="validacao_maiu_span">Senha contém caractere maiúsculo</span>
-              <input type="checkbox" id="validacao_leng" disabled>
-              <span id="validacao_leng_span">Senha contém ao menos 5 caracteres</span>
+                <input type="checkbox" id="validacao_num" disabled />
+                <span id="validacao_num_span"
+                  >Senha contém caractere numérico</span
+                >
+                <input type="checkbox" id="validacao_maiu" disabled />
+                <span id="validacao_maiu_span"
+                  >Senha contém caractere maiúsculo</span
+                >
+                <input type="checkbox" id="validacao_leng" disabled />
+                <span id="validacao_leng_span"
+                  >Senha contém ao menos 5 caracteres</span
+                >
               </div>
             </div>
             <div class="campo">
@@ -121,7 +137,14 @@
                 <span>Outro</span>
               </label>
             </div>
-            <button class="botao" id="botao_cadastro" onclick="cadastrar()" disabled>Cadastrar</button>
+            <button
+              class="botao"
+              id="botao_cadastro"
+              onclick="cadastrar()"
+              disabled
+            >
+              Cadastrar
+            </button>
           </div>
           <div id="div_aguardar" class="loading-div">
             <img src="./assets/circle-loading.gif" id="loading-gif" />
@@ -137,7 +160,7 @@
       <div class="container">
         <h4>CHUTE BOXE, HEY &starf; SPTech &copy; 2026</h4>
       </div>
-    </div>  
+    </div>
     <!--footer fim-->
   </body>
 </html>
@@ -146,44 +169,47 @@
   function validar() {
     var senhaVar = senha_input.value;
     var senhaMinuscula = senhaVar.toLowerCase();
-    var temMaiusculo = (senhaVar != senhaMinuscula);
+    var temMaiusculo = senhaVar != senhaMinuscula;
     var temMinimo = !(senhaVar.length < 5);
-    var temNumero = senhaVar.includes("0") || 
-                  senhaVar.includes("1") || 
-                  senhaVar.includes("2") || 
-                  senhaVar.includes("3") || 
-                  senhaVar.includes("4") || 
-                  senhaVar.includes("5") || 
-                  senhaVar.includes("6") || 
-                  senhaVar.includes("7") || 
-                  senhaVar.includes("8") || 
-                  senhaVar.includes("9");
+    var temNumero =
+      senhaVar.includes("0") ||
+      senhaVar.includes("1") ||
+      senhaVar.includes("2") ||
+      senhaVar.includes("3") ||
+      senhaVar.includes("4") ||
+      senhaVar.includes("5") ||
+      senhaVar.includes("6") ||
+      senhaVar.includes("7") ||
+      senhaVar.includes("8") ||
+      senhaVar.includes("9");
 
     validacao_num.checked = temNumero;
     validacao_maiu.checked = temMaiusculo;
     validacao_leng.checked = temMinimo;
 
     if (validacao_num.checked) {
-      validacao_num_span.style.color = 'green';
+      validacao_num_span.style.color = "green";
     } else {
-      validacao_num_span.style.color = '';
+      validacao_num_span.style.color = "";
     }
 
     if (validacao_maiu.checked) {
-      validacao_maiu_span.style.color = 'green';
+      validacao_maiu_span.style.color = "green";
     } else {
-      validacao_maiu_span.style.color = '';
+      validacao_maiu_span.style.color = "";
     }
 
     if (validacao_leng.checked) {
-      validacao_leng_span.style.color = 'green';
+      validacao_leng_span.style.color = "green";
     } else {
-      validacao_leng_span.style.color = '';
+      validacao_leng_span.style.color = "";
     }
 
-    if (validacao_num.checked &&
+    if (
+      validacao_num.checked &&
       validacao_maiu.checked &&
-      validacao_leng.checked) {
+      validacao_leng.checked
+    ) {
       return true;
     } else {
       return false;
@@ -195,37 +221,36 @@
     var confirmacaoSenhaVar = confirmacao_senha_input.value;
 
     if (confirmacaoSenhaVar == senhaVar && validar()) {
-      botao_cadastro.style.cursor = 'pointer';
+      botao_cadastro.style.cursor = "pointer";
       botao_cadastro.disabled = false;
       botao_cadastro.style.opacity = 1;
     } else {
-      botao_cadastro.style.cursor = 'not-allowed';
+      botao_cadastro.style.cursor = "not-allowed";
       botao_cadastro.disabled = true;
       botao_cadastro.style.opacity = 0.5;
     }
-
   }
 
-  setInterval(ativar, 100); 
-  
+  setInterval(ativar, 100);
+
   function listar() {
     fetch("/academia/listar", {
-        method: "GET",
+      method: "GET",
     })
-    .then(function (resposta) {
+      .then(function (resposta) {
         resposta.json().then(function (academias) {
-            academias.forEach(function (academia) {
-                var option = document.createElement("option");
-                option.value = academia.nome;
-                option.text = academia.nome;
-                academia_input.appendChild(option);
-            });
+          academias.forEach(function (academia) {
+            var option = document.createElement("option");
+            option.value = academia.nome;
+            option.text = academia.nome;
+            academia_input.appendChild(option);
+          });
         });
-    })
-    .catch(function (resposta) {
+      })
+      .catch(function (resposta) {
         console.log(`#ERRO: ${resposta}`);
-    });
-}
+      });
+  }
 
   function cadastrar() {
     var nomeVar = nome_input.value;
@@ -233,21 +258,16 @@
     var senhaVar = senha_input.value;
     var confirmacaoSenhaVar = confirmacao_senha_input.value;
     var academiaVar = academia_input.value || null;
-    var generoVar = document.querySelector('input[name="genero"]:checked',)?.value;
+    var generoVar = document.querySelector(
+      'input[name="genero"]:checked',
+    )?.value;
 
-    if (
-      nomeVar == "" ||
-      emailVar == "" ||
-      !generoVar
-    ) {
+    if (nomeVar == "" || emailVar == "" || !generoVar) {
       cardErro.style.display = "block";
       mensagem_erro.innerHTML = "(Preencha todos os campos corretamente)";
       finalizarAguardar();
       return false;
-
-    } else if (
-      !emailVar.includes('@')) 
-      {
+    } else if (!emailVar.includes("@")) {
       cardErro.style.display = "block";
       mensagem_erro.innerHTML = "(Adicione @ ao seu email para validação)";
       finalizarAguardar();
