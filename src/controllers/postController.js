@@ -90,6 +90,17 @@ function contarPorPost_Academia(req, res) {
     });
 }
 
+function listarTodos(req, res) {
+    var idUsuario = req.params.idUsuario;
+    postModel.listarTodos(idUsuario).then(function (resultado) {
+        res.status(200).json(resultado);
+    }).catch(function (erro) {
+        console.log(erro);
+        console.log("\nHouve um erro ao listar todos os posts! Erro: ", erro.sqlMessage);
+        res.status(500).json(erro.sqlMessage);
+    });
+}
+
 module.exports = {
     listar,
     publicar,
@@ -98,5 +109,6 @@ module.exports = {
     contarPorPost_Atleta,
     contarPorAtleta_Academia,
     contarPorAcademia,
-    contarPorPost_Academia
+    contarPorPost_Academia,
+    listarTodos
 };

@@ -34,4 +34,9 @@ router.get("/qtd_post_academia", function (req, res) {
     postController.contarPorPost_Academia(req, res);
 });
 
+router.get("/listarTodos/:idUsuario", function (req, res) {
+    postController.listarTodos(req, res);
+});
+
+
 module.exports = router;

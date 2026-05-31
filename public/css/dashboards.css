@@ -318,6 +318,7 @@ body {
 
 canvas {
   max-width: 100%;
+  display: block;
 }
 
 /* PAGINA DOS GRÁFICOS 2023 */
@@ -462,4 +463,12 @@ canvas {
   flex-direction: column;
   align-items: center;
   padding: 30px;
+}
+
+.grafico_mural {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 40px;
 }

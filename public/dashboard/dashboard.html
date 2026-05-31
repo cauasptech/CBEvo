@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="./../css/dashboards.css" />
     <link rel="stylesheet" href="./../css/estilo.css" />
     <script src="../js/sessao.js"></script>
-    <script src="./../js/alerta.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <link rel="preconnect" href="https://fonts.gstatic.com" />
@@ -250,13 +249,13 @@
 
         var postagem = postUsuario.slice();
 
-        // montando os labels do eixo X com a data de cada treino
+        // eixo X
         var labels = [];
         for (let i = 0; i < postagem.length; i++) {
             labels.push(new Date(postagem[i].dtTreino).toLocaleDateString("pt-BR"));
         }
 
-        // Y fixo em 1 para ficar em linha reta
+        // eixo Y fiixo em 1 para linha ficar reta
         var dadosY = [];
         for (let i = 0; i < postagem.length; i++) {
             dadosY.push(1);

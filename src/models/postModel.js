@@ -91,6 +91,18 @@ function contarPorPost_Academia() {
   return database.executar(instrucaoSql);
 }
 
+function listarTodos(idUsuario) {
+  var instrucaoSql = `
+        SELECT p.fkUsuario, u.nome, p.dtTreino, p.esporte, p.descricao
+        FROM post p
+        JOIN usuario u ON p.fkUsuario = u.idusuario
+        WHERE p.fkUsuario != ${idUsuario}
+        ORDER BY p.fkUsuario, p.dtTreino DESC;
+    `;
+  console.log("Executando a instrução SQL: \n" + instrucaoSql);
+  return database.executar(instrucaoSql);
+}
+
 module.exports = {
   listar,
   publicar,
@@ -99,5 +111,6 @@ module.exports = {
   contarPorPost_Atleta,
   contarPorAtleta_Academia,
   contarPorAcademia,
-  contarPorPost_Academia
+  contarPorPost_Academia,
+  listarTodos
 };

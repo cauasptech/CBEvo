@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="./../css/estilo.css" />
 
     <script src="../js/sessao.js"></script>
-    <script src="../js/alerta.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
@@ -23,7 +23,7 @@
     />
   </head>
 
-  <body onload="(validarSessao(), listarAcademias())">
+  <body onload="(validarSessao(), listarMural())">
     <div class="janela">
       <div class="header-left dash-header">
         <h1>CB EVO ★</h1>
@@ -54,36 +54,139 @@
       </div>
 
       <div class="dash">
-        <div class="cards" id="cardAcademias"></div>
+        <div id="graficoMural"></div>
       </div>
     </div>
   </body>
 
-  <script>
-    b_usuario.innerHTML = sessionStorage.NOME_USUARIO;
+<script>
+  b_usuario.innerHTML = sessionStorage.NOME_USUARIO;
 
-    function listarAcademias() {
-      fetch("/academia/listar")
-        .then(function (resposta) {
-          if (resposta.ok) {
-            resposta.json().then(function (academias) {
-              academias.forEach(function (academia) {
-                document.getElementById("cardAcademias").innerHTML += `
-                        <div class="card-aquario">
-                        <div class="title-aquario">
-                        <h1>${academia.nome}</h1>
-                        </div>
-                        <div class="desc-aquario">
-                        <p>CEP: ${academia.fk_CEP}</p>
-                        </div>
-                        </div>`;
-              });
-            });
+  function listarMural() {
+  var idUsuario = sessionStorage.ID_USUARIO;
+
+  fetch(`/post/listarTodos/${idUsuario}`)
+    .then(function (resposta) {
+      if (resposta.ok) {
+        resposta.json().then(function (posts) {
+        console.log("Dados recebidos: ", JSON.stringify(posts));
+
+        // armazenando ids que não sejam repetidos
+        var idsUnicos = [];
+        for (var i = 0; i < posts.length; i++) {
+          if (idsUnicos.indexOf(posts[i].fkUsuario) == -1) {
+            idsUnicos.push(posts[i].fkUsuario);
           }
-        })
-        .catch(function (erro) {
-          console.log(`#ERRO: ${erro}`);
-        });
+        }
+
+        // cada id vai filtra os posts e cria o canvas
+        var container = document.getElementById("graficoMural");
+
+        for (var j = 0; j < idsUnicos.length; j++) {
+        var idAtleta = idsUnicos[j];
+
+        var postsdoAtleta = posts.filter(function (post) {
+        return post.fkUsuario == idAtleta;
+      });
+
+        var nomeAtleta = postsdoAtleta[0].nome;
+
+          container.innerHTML += `
+            <div class="grafico_mural">
+            <h3 class="tituloGraficos">${nomeAtleta}</h3>
+            <div style="width: 800px; height: 200px;">
+            <canvas id="grafico_${idAtleta}"></canvas>
+            </div>
+            </div>
+              `;
+        }
+
+        // plotando cada gráfico
+        for (var k = 0; k < idsUnicos.length; k++) {
+        var idAtleta = idsUnicos[k];
+
+        var postsdoAtleta = posts.filter(function (post) {
+        return post.fkUsuario == idAtleta;
+      }).slice(0, 5);
+
+        plotarGraficoMural(idAtleta, postsdoAtleta);
+        }
+      });
+        } else {
+        throw "Houve um erro na API!";
+        }
+      })
+      .catch(function (resposta) {
+        console.error(resposta);
+      });
+  }
+
+  function plotarGraficoMural(idAtleta, postsdoAtleta) {
+
+  // eixo X
+  var labels = [];
+  for (var i = 0; i < postsdoAtleta.length; i++) {
+    labels.push(new Date(postsdoAtleta[i].dtTreino).toLocaleDateString("pt-BR"));
+  }
+
+  // eixo Y fixo
+  var dadosY = [];
+  for (var i = 0; i < postsdoAtleta.length; i++) {
+    dadosY.push(1);
+  }
+
+  var dados = {
+    labels: labels,
+    datasets: [{
+      label: postsdoAtleta[0].nome,
+      data: dadosY,
+      fill: false,
+      borderColor: "rgb(199, 52, 52)",
+      pointBackgroundColor: "rgb(199, 52, 52)",
+      tension: 0.1
+    }]
+  };
+
+  var config = {
+    type: "line",
+    data: dados,
+    options: {
+      maintainAspectRatio: false,
+      color: "white",
+      scales: {
+        y: {        
+          display: false
+        },
+        x: {
+          grid: {
+            color: "white"
+          },
+          ticks: {
+            color: "white"
+          }
+        }
+      },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+  var index = context.dataIndex;
+  return [
+    "Atleta: " + postsdoAtleta[0].nome,
+    "Esporte: " + postsdoAtleta[index].esporte,
+    "Descrição: " + postsdoAtleta[index].descricao
+            ];
+          }
+        }
+      }
     }
-  </script>
+  }
+};
+
+  new Chart(
+    document.getElementById(`grafico_${idAtleta}`),
+    config
+  );
+}
+</script>
 </html>
