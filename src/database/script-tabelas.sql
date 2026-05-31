@@ -63,21 +63,6 @@ INSERT INTO post (esporte, dtTreino, descricao, fkUsuario) VALUES
 
 SELECT * FROM post;
 
-CREATE TABLE curtida (
-fkPost INT,
-fkUsuario INT,
-PRIMARY KEY (fkPost, fkUsuario), 
-CONSTRAINT fk_post_curtida FOREIGN KEY (fkPost) REFERENCES post(idpost),
-CONSTRAINT fk_usuario_curtida FOREIGN KEY (fkUsuario) REFERENCES usuario(idusuario)
-);
-
-INSERT INTO curtida (fkPost, fkUsuario) VALUES
-(2, 1),
-(1, 3),
-(3, 2);
-
-SELECT * FROM curtida;
-
 SELECT u.idusuario,
 u.nome AS nome_usuario,
 u.email,

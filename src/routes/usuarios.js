@@ -13,8 +13,4 @@ router.post("/autenticar", function (req, res) {
     usuarioController.autenticar(req, res);
 });
 
-router.get("/contar-genero", function (req, res) {
-    usuarioController.contarPorGenero(req, res);
-});
-
 module.exports = router;

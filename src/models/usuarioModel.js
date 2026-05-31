@@ -24,17 +24,8 @@ function cadastrar(nome, email, senha, genero, nomeAcademia) {
     return database.executar(instrucaoSql);
 }
 
-// contar usuários por gênero
-function contarPorGenero() {
-    var instrucaoSql = `
-        SELECT genero, COUNT(*) AS total FROM usuario GROUP BY genero;
-    `;
-    console.log("Executando a instrução SQL: \n" + instrucaoSql);
-    return database.executar(instrucaoSql);
-}
 
 module.exports = {
     autenticar,
-    cadastrar,
-    contarPorGenero
+    cadastrar
 };

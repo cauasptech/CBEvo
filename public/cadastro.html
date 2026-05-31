@@ -23,7 +23,7 @@
     <!--header inicio-->
     <div class="header">
       <div class="container">
-        <h1 class="titulo">CHUTE BOXE ★</h1>
+        <h1 class="titulo">CB EVO ★</h1>
         <ul class="navbar">
           <li>
             <a href="index.html">Início</a>
@@ -267,9 +267,9 @@
       mensagem_erro.innerHTML = "(Preencha todos os campos corretamente)";
       finalizarAguardar();
       return false;
-    } else if (!emailVar.includes("@")) {
+    } else if (!emailVar.includes("@") || !emailVar.includes(".")) {
       cardErro.style.display = "block";
-      mensagem_erro.innerHTML = "(Adicione @ ao seu email para validação)";
+      mensagem_erro.innerHTML = "(Adicione '@'' e '.' ao seu email para validação)";
       finalizarAguardar();
       return false;
     } else {

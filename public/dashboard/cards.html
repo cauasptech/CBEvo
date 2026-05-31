@@ -37,7 +37,7 @@
   <body onload="(validarSessao(), carregarGraficos())">
     <div class="janela">
       <div class="header-left">
-        <h1>CHUTE BOXE ★</h1>
+        <h1>CB EVO ★</h1>
 
         <div class="hello">
           <h3>Olá, <span id="b_usuario">usuário</span>!</h3>
@@ -68,14 +68,35 @@
         <div id="graficos">
           <div>
             <h3 class="tituloGraficos">Posts por Esporte</h3>
-            <div class="graph">
+            <div style="width: 300px; height: 300px;" class="graph">
               <canvas id="chartEsporte"></canvas>
             </div>
           </div>
           <div>
-            <h3 class="tituloGraficos">Usuários por Gênero</h3>
-            <div class="graph">
-              <canvas id="chartGenero"></canvas>
+              <h3 class="tituloGraficos">Usuários por Gênero</h3>
+              <div style="width: 300px; height: 300px;" class="graph">
+                <canvas id="chartGenero"></canvas>
+            </div>
+          </div>
+          <div id="kpis">
+            <div class="kpi">
+              <h3 class="titulo">Atleta com mais posts:</h3>
+              <p id="kpi_atleta"></p>
+            </div>
+            <div class="kpi">
+              <h3 class="titulo">Academia com mais atletas:</h3>
+              <p id="kpi_academia"></p>
+            </div>
+            <div class="kpi">
+              <h3 class="titulo">Total de academias:</h3>
+              <p id="kpi_total"></p>
+            </div>
+            </div>
+            <div id="grafico_academia">
+              <h3 class="titulo" style="color: white;">Posts por Academia</h3>
+              <div style="width: 700px; height: 400px;" class="graph">
+                <canvas id="chartPostAcad"></canvas>
+              </div>
             </div>
           </div>
         </div>
@@ -88,12 +109,16 @@
   b_usuario.innerHTML = sessionStorage.NOME_USUARIO;
 
   function carregarGraficos() {
-    carregarGraficoEsporte();
-    carregarGraficoGenero();
+    plotarEsporte();
+    plotarGenero();
+    plotarAtletaMaisPosts();
+    plotarAcademiaMaisAtletas();
+    plotarTotalAcademias();
+    plotarAcademiaMaisPosts();
   }
 
-  function carregarGraficoEsporte() {
-    fetch("/post/contar-esporte")
+  function plotarEsporte() {
+    fetch("/post/qtd_esporte")
       .then(function (resposta) {
         if (resposta.ok) {
           resposta.json().then(function (resultado) {
@@ -114,17 +139,19 @@
                   label: "Quantidade de Posts",
                   data: totais,
                   backgroundColor: [
-                    "rgb(230, 0, 90)",
-                    "rgb(75, 192, 192)",
-                    "rgb(255, 205, 86)",
+                    "rgb(245, 0, 0)",
+                    "rgb(75, 192, 252)",
+                    "rgb(255, 255, 255)",
                   ],
                 },
               ],
             };
 
             var config = {
-              type: "bar",
+              type: "doughnut",
               data: dados,
+              options: {
+              color: "white"}
             };
 
             new Chart(document.getElementById("chartEsporte"), config);
@@ -140,8 +167,8 @@
       });
   }
 
-  function carregarGraficoGenero() {
-    fetch("/usuarios/contar-genero")
+  function plotarGenero() {
+    fetch("/post/qtd_genero")
       .then(function (resposta) {
         if (resposta.ok) {
           resposta.json().then(function (resultado) {
@@ -164,20 +191,152 @@
                   label: "Usuários por Gênero",
                   data: totais,
                   backgroundColor: [
-                    "rgb(75, 192, 192)",
-                    "rgb(230, 0, 90)",
-                    "rgb(255, 205, 86)",
+                    "rgb(0, 0, 225)",
+                    "rgb(245, 0, 0)",
+                    "rgb(225 , 0, 200)",
                   ],
                 },
               ],
             };
 
             var config = {
-              type: "pie",
+              type: "doughnut",
               data: dados,
+              options: {
+              color: "#ffff"}
             };
 
             new Chart(document.getElementById("chartGenero"), config);
+          });
+        } else {
+          console.error("Nenhum dado encontrado ou erro na API");
+        }
+      })
+      .catch(function (erro) {
+        console.error(
+          `Houve um erro na obtenção dos dados p/ gráfico: ${erro.message}`,
+        );
+      });
+  }
+
+  function plotarAtletaMaisPosts() {
+    fetch("/post/qtd_post_atleta")
+      .then(function (resposta) {
+        if (resposta.ok) {
+          resposta.json().then(function (resultado) {
+          console.log(`Dados recebidos: ${JSON.stringify(resultado)}`);
+
+          var nomes = [];
+          for (var i = 0; i < resultado.length; i++) {
+          nomes.push(resultado[i].nome + " (" + resultado[i].total + " posts)");
+        }
+
+          document.getElementById("kpi_atleta").innerHTML = nomes.join(", ");
+        });
+        } else {
+          console.error("Nenhum dado encontrado ou erro na API");
+      }
+        })
+          .catch(function (erro) {
+            console.error(`Houve um erro na obtenção dos dados: ${erro.message}`);
+        });
+    }
+
+    function plotarAcademiaMaisAtletas() {
+      fetch("/post/qtd_atleta_academia")
+        .then(function (resposta) {
+          if (resposta.ok) {
+            resposta.json().then(function (resultado) {
+              console.log(`Dados recebidos: ${JSON.stringify(resultado)}`);
+
+              var academias = [];
+              for (var i = 0; i < resultado.length; i++) {
+              academias.push(resultado[i].academia + " (" + resultado[i].total + " atletas)");
+            }
+
+              document.getElementById("kpi_academia").innerHTML = academias.join(", ");
+            });
+            } else {
+              console.error("Nenhum dado encontrado ou erro na API");
+          }
+            })
+            .catch(function (erro) {
+              console.error(`Houve um erro na obtenção dos dados: ${erro.message}`);
+            });
+    }
+
+    function plotarTotalAcademias() {
+      fetch("/post/qtd_academia")
+        .then(function (resposta) {
+          if (resposta.ok) {
+            resposta.json().then(function (resultado) {
+              console.log(`Dados recebidos: ${JSON.stringify(resultado)}`);
+              document.getElementById("kpi_total").innerHTML = resultado[0].total;
+          });
+          } else {
+            console.error("Nenhum dado encontrado ou erro na API");
+        }
+          })
+            .catch(function (erro) {
+              console.error(`Houve um erro na obtenção dos dados: ${erro.message}`);
+          });
+    }
+
+    function plotarAcademiaMaisPosts() {
+    fetch("/post/qtd_post_academia")
+      .then(function (resposta) {
+        if (resposta.ok) {
+          resposta.json().then(function (resultado) {
+            console.log(`Dados recebidos: ${JSON.stringify(resultado)}`);
+
+            var labels = [];
+            var totais = [];
+
+            for (var i = 0; i < resultado.length; i++) {
+              labels.push(resultado[i].academia);
+              totais.push(resultado[i].total);
+            }
+
+            var dados = {
+              labels: labels,
+              datasets: [
+                {
+                  label: "Posts por Academia",
+                  data: totais,
+                  backgroundColor: [
+                    "rgb(245 , 0, 10)",
+                    "rgb(5 , 255, 0)",
+                    "rgb(75 , 195, 252)",
+                    "rgb(255 , 255, 255)",
+                  ],
+                },
+              ],
+            };
+
+            var config = {
+              type: "bar",
+              data: dados,
+              options: {
+                color: "white",
+                scales: {
+                  x: {
+                    ticks: {
+                      color: "white"
+                    }
+                  },
+                  y: {
+                    ticks: {
+                      color: "white",
+                      stepSize: 1
+                    },
+                    grid: {
+                      color: "red"
+                    }
+                  }
+                }}
+            };
+
+            new Chart(document.getElementById("chartPostAcad"), config);
           });
         } else {
           console.error("Nenhum dado encontrado ou erro na API");

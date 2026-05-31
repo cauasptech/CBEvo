@@ -40,8 +40,63 @@ function contarPorEsporte(req, res) {
     });
 }
 
+function contarPorGenero(req, res) {
+    postModel.contarPorGenero().then(function (resultado) {
+        res.status(200).json(resultado);
+    }).catch(function (erro) {
+        console.log(erro);
+        console.log("\nHouve um erro ao contar posts! Erro: ", erro.sqlMessage);
+        res.status(500).json(erro.sqlMessage);
+    });
+}
+
+function contarPorPost_Atleta(req, res) {
+    postModel.contarPorPost_Atleta().then(function (resultado) {
+        res.status(200).json(resultado);
+    }).catch(function (erro) {
+        console.log(erro);
+        console.log("\nHouve um erro ao contar posts em atletas! Erro: ", erro.sqlMessage);
+        res.status(500).json(erro.sqlMessage);
+    });
+}
+
+function contarPorAtleta_Academia(req, res) {
+    postModel.contarPorAtleta_Academia().then(function (resultado) {
+        res.status(200).json(resultado);
+    }).catch(function (erro) {
+        console.log(erro);
+        console.log("\nHouve um erro ao contar atletas em academias! Erro: ", erro.sqlMessage);
+        res.status(500).json(erro.sqlMessage);
+    });
+}
+
+function contarPorAcademia(req, res) {
+    postModel.contarPorAcademia().then(function (resultado) {
+        res.status(200).json(resultado);
+    }).catch(function (erro) {
+        console.log(erro);
+        console.log("\nHouve um erro ao contar academias! Erro: ", erro.sqlMessage);
+        res.status(500).json(erro.sqlMessage);
+    });
+}
+
+function contarPorPost_Academia(req, res) {
+    postModel.contarPorPost_Academia().then(function (resultado) {
+        res.status(200).json(resultado);
+    }).catch(function (erro) {
+        console.log(erro);
+        console.log("\nHouve um erro ao contar posts por academia! Erro: ", erro.sqlMessage);
+        res.status(500).json(erro.sqlMessage);
+    });
+}
+
 module.exports = {
     listar,
     publicar,
-    contarPorEsporte
+    contarPorEsporte,
+    contarPorGenero,
+    contarPorPost_Atleta,
+    contarPorAtleta_Academia,
+    contarPorAcademia,
+    contarPorPost_Academia
 };

@@ -37,10 +37,6 @@ body {
   width: 95%;
 }
 
-.dash-right .avisos .div-form input {
-  width: 95%;
-  border-radius: 5px;
-}
 
 .dash-right .avisos .div-form textarea {
   width: 95%;
@@ -321,8 +317,7 @@ body {
 }
 
 canvas {
-  width: 100% !important;
-  height: 100% !important;
+  max-width: 100%;
 }
 
 /* PAGINA DOS GRÁFICOS 2023 */
@@ -425,4 +420,46 @@ canvas {
   padding: 10px 15px;
   margin-bottom: 100px;
   cursor: pointer;
+}
+
+#graficos {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 40px;
+    padding: 30px;
+}
+
+#kpis {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  padding: 30px;
+  flex-wrap: wrap;
+}
+
+.kpi {
+  background-color: black;
+  border-radius: 20px;
+  padding: 20px;
+  text-align: center;
+  color: white;
+}
+
+.kpi h3 {
+  color: white  ;
+}
+
+.kpi p {
+  font-size: 20px;
+  font-weight: 800;
+  color: #e60000;
+}
+
+#grafico_academia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
 }

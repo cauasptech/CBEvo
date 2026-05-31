@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="./../css/estilo.css" />
     <script src="../js/sessao.js"></script>
     <script src="./../js/alerta.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
@@ -29,7 +30,7 @@
   >
     <div class="janela">
       <div class="header-left">
-        <h1>CHUTE BOXE ★</h1>
+        <h1>CB EVO ★</h1>
 
         <div class="hello">
           <h3>Olá, <span id="b_usuario">usuário</span>!</h3>
@@ -60,29 +61,54 @@
         <div class="avisos">
           <div id="alerta"></div>
           <div class="container">
-            <h1>Publicar um aviso</h1>
+            <h1>Publicar treino</h1>
             <div class="div-form">
               <form
                 id="form_postagem"
                 method="post"
                 onsubmit="return publicar();"
-              >
-                <label>
-                  Título:
-                  <br />
-                  <input
-                    name="titulo"
-                    id="titulo"
-                    maxlength="100"
-                    type="text"
-                  />
+                >
+                <span>Arte Marcial:</span>
+              <div class="campo_radio">
+                <input
+                  class="input-radio"
+                  type="radio"
+                  id="id_muay"
+                  name="arte"
+                  value="Muay Thai"
+                />
+                <label for="id_muay">
+                  <div class="radio-btn"></div>
+                  <span>Muay Thai</span>
                 </label>
+  
+                <input
+                  class="input-radio"
+                  type="radio"
+                  id="id_jiu"
+                  name="arte"
+                  value="Jiu-Jitsu"
+                />
+                <label for="id_jiu">
+                  <div class="radio-btn"></div>
+                  <span>Jiu-Jitsu</span>
+                </label>
+  
+                <input
+                  class="input-radio"
+                  type="radio"
+                  id="id_misto"
+                  name="arte"
+                  value="Misto"
+                />
+                <label for="id_misto">
+                  <div class="radio-btn"></div>
+                  <span>Misto</span>
+                </label>
+              </div>
+                Descrição (máximo de 250 caracteres):
                 <br />
-                <br />
-                <label>
-                  Descrição (máximo de 250 caracteres):
-                  <br />
-                  <textarea
+                <textarea
                     name="descricao"
                     id="textarea_descricao"
                     maxlength="250"
@@ -94,8 +120,11 @@
                 <button>Enviar</button>
               </form>
             </div>
-            <h1>Mural de Treinos</h1>
             <div class="div-results">
+              <div class="graph">
+                <canvas id="graficoPessoal"></canvas>
+                <h1>Hitstórico de Treinos</h1>
+                </div>
               <div id="feed_container" class="feed-container"></div>
             </div>
           </div>
@@ -116,11 +145,11 @@
     var idUsuario = sessionStorage.ID_USUARIO;
 
     var corpo = {
-      esporteServer: form_postagem.esporte.value,
+      esporteServer: form_postagem.arte.value,
       descricaoServer: form_postagem.descricao.value,
     };
 
-    fetch(`/avisos/publicar/${idUsuario}`, {
+    fetch(`/post/publicar/${idUsuario}`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -136,7 +165,7 @@
               idUsuario +
               "!",
           );
-          window.location = "/dashboard/mural.html";
+          window.location = "/dashboard/dashboard.html";
           limparFormulario();
           finalizarAguardar();
         } else if (resposta.status == 404) {
@@ -163,11 +192,17 @@
           resposta.json().then(function (resposta) {
             console.log("Dados recebidos: ", JSON.stringify(resposta));
 
+            var idUsuario = sessionStorage.ID_USUARIO;
+
+            var postUsuario = resposta.filter(function (post) {
+              return post.fkUsuario == idUsuario;
+            });
+
             var feed = document.getElementById("feed_container");
             feed.innerHTML = "";
 
-            for (let i = 0; i < resposta.length; i++) {
-              var publicacao = resposta[i];
+            for (let i = 0; i < postUsuario.length; i++) {
+              var publicacao = postUsuario[i];
 
               var divPublicacao = document.createElement("div");
               var spanNome = document.createElement("span");
@@ -197,6 +232,7 @@
               feed.appendChild(divPublicacao);
             }
 
+            plotarGrafico(postUsuario);
             finalizarAguardar();
           });
         } else {
@@ -207,5 +243,75 @@
         console.error(resposta);
         finalizarAguardar();
       });
-  }
+
+    }
+
+      function plotarGrafico(postUsuario) {
+
+        var postagem = postUsuario.slice();
+
+        // montando os labels do eixo X com a data de cada treino
+        var labels = [];
+        for (let i = 0; i < postagem.length; i++) {
+            labels.push(new Date(postagem[i].dtTreino).toLocaleDateString("pt-BR"));
+        }
+
+        // Y fixo em 1 para ficar em linha reta
+        var dadosY = [];
+        for (let i = 0; i < postagem.length; i++) {
+            dadosY.push(1);
+        }
+
+        var dados = {
+            labels: labels,
+            datasets: [{
+                label: sessionStorage.NOME_USUARIO,
+                data: dadosY,
+                fill: false,
+                borderColor: "rgb(199, 52, 52)",
+                pointBackgroundColor: "rgb(199, 52, 52)",
+                tension: 0.1
+            }]
+        };
+
+        var config = {
+            type: "line",
+            data: dados,
+            options: {
+              color: "white",
+                scales: {
+                    y: {
+                        display: false
+                    },
+                    x: {
+                      ticks: {
+                        color: "white"
+                      },
+                      grid: {
+                        color: "white"
+                      }
+                    }
+                },
+                plugins: {
+                  tooltip: {
+                    callbacks: {
+                      label: function(context) {
+                        var i = context.dataIndex;
+                        return [
+                          "Atleta: " + postagem[i].nome,
+                          "Esporte: " + postagem[i].esporte,
+                          "Descrição: " + postagem[i].descricao
+                        ];
+            }
+                  }
+                }
+              }
+            }
+        };
+
+        new Chart(
+            document.getElementById("graficoPessoal"),
+            config
+        );
+    }
 </script>
