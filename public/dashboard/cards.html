@@ -134,7 +134,7 @@
             for (var i = 0; i < resultado.length; i++) {
               labels.push(resultado[i].esporte);
               totais.push(resultado[i].total);
-              // calculo matematico de Arq Comp
+              // calculo matematico   de Arq Comp
               totalPosts = totalPosts + resultado[i].total;
             }
             document.getElementById("kpi_total_posts").innerHTML = totalPosts;
@@ -324,6 +324,11 @@
               type: "bar",
               data: dados,
               options: {
+                plugins: {
+                  legend: {
+                    display: false
+                  },
+                },
                 color: "white",
                 scales: {
                   x: {
