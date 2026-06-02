@@ -512,3 +512,18 @@ input {
   margin-bottom: 20px;
   color: #000000c2;
 }
+
+.fotos {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.fotos img {
+  height: 500px;
+  width: 500px;
+  transition: 2s;
+  &:hover {
+    transform: scale(1.1);
+  }
+}
