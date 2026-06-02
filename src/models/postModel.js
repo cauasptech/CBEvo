@@ -5,7 +5,7 @@ function listar() {
         SELECT p.idpost, p.esporte, p.dtTreino, p.descricao, p.fkUsuario, u.nome
         FROM post p
         JOIN usuario u ON p.fkUsuario = u.idusuario
-        ORDER BY p.dtTreino DESC;
+        ORDER BY p.dtTreino;
     `;
   console.log("Executando a instrução SQL: \n" + instrucaoSql);
   return database.executar(instrucaoSql);
@@ -97,7 +97,7 @@ function listarTodos(idUsuario) {
         FROM post p
         JOIN usuario u ON p.fkUsuario = u.idusuario
         WHERE p.fkUsuario != ${idUsuario}
-        ORDER BY p.fkUsuario, p.dtTreino DESC;
+        ORDER BY p.fkUsuario, p.dtTreino;
     `;
   console.log("Executando a instrução SQL: \n" + instrucaoSql);
   return database.executar(instrucaoSql);
