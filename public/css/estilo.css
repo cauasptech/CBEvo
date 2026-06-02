@@ -210,7 +210,7 @@ body {
 
 .card {
   width: 50%;
-  background-color: #ffffff;
+  background-color: #212124;
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -493,7 +493,7 @@ input {
   justify-content: center;
   margin-top: 10px;
   gap: 20px;
-  color: rgba(88, 88, 88, 0.411);
+  color: rgb(209, 209, 209);
   flex-direction: row;
 }
 

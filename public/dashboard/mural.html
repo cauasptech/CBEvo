@@ -107,7 +107,7 @@
 
         var postsdoAtleta = posts.filter(function (post) {
         return post.fkUsuario == idAtleta;
-      }).slice(0, 5);
+      });
 
         plotarGraficoMural(idAtleta, postsdoAtleta);
         }
